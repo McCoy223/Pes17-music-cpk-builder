@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PES 17 Music CPK Builder</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+  <nav>
+    <div class="nav-brand">
+      <div class="nav-logo">⚽</div>
+      <div class="nav-title">PES<span>17</span> Music CPK</div>
+    </div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="switchTab('slots', this)">Track Slots</button>
+      <button class="nav-tab" onclick="switchTab('guide', this)">Guide</button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">CPK Builder · v1.0</div>
+    <h1>Build Your<br><span>Custom Music</span> Pack</h1>
+    <p>Assign MP3 or OGG audio files to PES 2017 music slots and export a manifest to create your music.cpk file.</p>
+  </div>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar">
+    <div class="stat-cell">
+      <div class="stat-label">Total Slots</div>
+      <div class="stat-value" id="stat-total">28</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Assigned</div>
+      <div class="stat-value green" id="stat-assigned">0</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Remaining</div>
+      <div class="stat-value" id="stat-empty">28</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Progress</div>
+      <div class="stat-value" id="stat-pct">0%</div>
+      <div class="progress-wrap">
+        <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+
+    <!-- TRACK SLOTS SECTION -->
+    <div id="sec-slots" class="section active">
+
+      <div class="toolbar">
+        <button class="btn btn-primary" onclick="document.getElementById('bulk-input').click()">
+          <span>↑</span> Add Audio Files
+        </button>
+        <input type="file" id="bulk-input" accept="audio/*" multiple onchange="handleBulkUpload(this.files)">
+
+        <div class="search-wrap">
+          <span class="search-icon">⌕</span>
+          <input type="text" id="search-input" placeholder="Search slots..." oninput="renderSlots()">
+        </div>
+
+        <select class="filter-select" onchange="filterStatus=this.value; renderSlots()">
+          <option value="all">All slots</option>
+          <option value="assigned">Assigned only</option>
+          <option value="empty">Empty only</option>
+        </select>
+
+        <button class="btn btn-danger" onclick="clearAll()">✕ Clear All</button>
+        <button class="btn btn-export" onclick="exportManifest()">↓ Export CPK Manifest</button>
+      </div>
+
+      <!-- DROP ZONE -->
+      <div class="drop-zone" id="drop-zone"
+        ondragover="dzOver(event)"
+        ondragleave="dzLeave()"
+        ondrop="dzDrop(event)"
+        onclick="document.getElementById('bulk-input').click()">
+        <div class="drop-zone-icon">🎵</div>
+        <div class="drop-zone-title">Drop audio files here to auto-assign</div>
+        <div class="drop-zone-sub">or click to browse · MP3, OGG, WAV, FLAC supported</div>
+      </div>
+
+      <div id="slots-container"></div>
+    </div>
+
+    <!-- GUIDE SECTION -->
+    <div id="sec-guide" class="section">
+      <div class="guide-grid">
+        <div class="guide-card">
+          <div class="guide-num">1</div>
+          <h3>Add your audio files</h3>
+          <p>Click "Add Audio Files" or drag &amp; drop MP3 / OGG files into the drop zone. Multiple files will auto-fill empty slots in order.</p>
+        </div>
+        <div class="guide-card">
+          <div class="guide-num">2</div>
+          <h3>Assign tracks to slots</h3>
+          <p>Each slot maps to a specific PES 17 in-game sound. Click "Choose" next to any slot to assign a specific track. Drag rows to swap tracks between slots.</p>
+        </div>
+        <div class="guide-card">
+          <div class="guide-num">3</div>
+          <h3>Preview your tracks</h3>
+          <p>Use the play button (▶) to preview any assigned track right in the browser before you finalize.</p>
+        </div>
+        <div class="guide-card">
+          <div class="guide-num">4</div>
+          <h3>Export &amp; pack</h3>
+          <p>Click "Export CPK Manifest" to download a <code>music_cpk_manifest.txt</code> with renaming instructions and folder paths.</p>
+        </div>
+      </div>
+
+      <div class="info-panel info-amber">
+        <p><strong>File naming:</strong> PES 17 expects <code>.adx</code> filenames inside the CPK. Rename your audio files as shown in the manifest, place them in <code>Asset/Audio/BGM/</code> and use <strong>CPK Tools</strong> to pack them into <code>music.cpk</code>, then place that file in <code>PES17/Data/</code>.</p>
+      </div>
+
+      <div class="info-panel info-green">
+        <p><strong>Slot categories:</strong> The builder covers <strong>Menu &amp; UI</strong> (main menu, edit, matchday screens), <strong>Match Atmosphere</strong> (kick-off, half-time, goal jingles, FT results), <strong>Anthems</strong> (UCL, UEL, and 4 club anthem slots), <strong>Commentary</strong>, and <strong>Highlights</strong> — 28 slots total.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
