@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PES 17 Music CPK Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #00c853;
+    --green-dark: #00952e;
+    --green-dim: #00c85322;
+    --green-mid: #00c85344;
+    --bg: #080e0a;
+    --bg2: #0d170f;
+    --bg3: #111d13;
+    --bg4: #172019;
+    --surface: #1a2a1c;
+    --surface2: #1f3022;
+    --border: #2a3f2c;
+    --border2: #335235;
+    --text: #e8f5e9;
+    --text2: #a5c4a7;
+    --text3: #6a8f6c;
+    --red: #ff4444;
+    --red-dim: #ff444422;
+    --amber: #ffab00;
+    --amber-dim: #ffab0022;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Barlow', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* BACKGROUND GRID */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.25;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    top: -200px;
+    left: -200px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, #00c85312 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(8,14,10,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+  }
+
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .nav-logo {
+    width: 32px;
+    height: 32px;
+    background: var(--green);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  .nav-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--text);
+    text-transform: uppercase;
+  }
+
+  .nav-title span { color: var(--green); }
+
+  .nav-tabs {
+    display: flex;
+    gap: 0;
+  }
+
+  .nav-tab {
+    padding: 0 18px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: var(--text3);
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .nav-tab:hover { color: var(--text2); }
+  .nav-tab.active { color: var(--green); border-bottom-color: var(--green); }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    z-index: 1;
+    padding: 3rem 2rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--green-dim);
+    border: 1px solid var(--green-dark);
+    color: var(--green);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+  }
+
+  .hero-badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  .hero h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    margin-bottom: 0.75rem;
+    color: var(--text);
+  }
+
+  .hero h1 span { color: var(--green); }
+
+  .hero p {
+    font-size: 15px;
+    color: var(--text2);
+    font-weight: 300;
+    max-width: 520px;
+    line-height: 1.6;
+  }
+
+  /* STATS BAR */
+  .stats-bar {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto 2rem;
+    padding: 0 2rem;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .stat-cell {
+    background: var(--bg3);
+    padding: 16px 20px;
+    transition: background 0.2s;
+  }
+
+  .stat-cell:hover { background: var(--bg4); }
+
+  .stat-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 4px;
+  }
+
+  .stat-value {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .stat-value.green { color: var(--green); }
+
+  .progress-wrap {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-top: 6px;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: var(--green);
+    border-radius: 2px;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 8px var(--green);
+  }
+
+  /* MAIN CONTENT */
+  .main {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2rem 4rem;
+  }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* TOOLBAR */
+  .toolbar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1px solid var(--border2);
+    background: var(--surface);
+    color: var(--text2);
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .btn:hover { background: var(--surface2); color: var(--text); border-color: var(--green-dark); }
+
+  .btn-primary {
+    background: var(--green);
+    color: #000;
+    border-color: var(--green);
+    font-weight: 600;
+  }
+
+  .btn-primary:hover { background: #00e060; border-color: #00e060; color: #000; }
+
+  .btn-danger { color: var(--red); border-color: #ff444433; }
+  .btn-danger:hover { background: var(--red-dim); border-color: var(--red); }
+
+  .btn-export {
+    background: transparent;
+    border: 1px solid var(--green);
+    color: var(--green);
+    font-weight: 600;
+  }
+
+  .btn-export:hover { background: var(--green-dim); }
+
+  .search-wrap {
+    flex: 1;
+    min-width: 200px;
+    position: relative;
+  }
+
+  .search-wrap input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 12px 8px 36px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .search-wrap input:focus { border-color: var(--green-dark); }
+  .search-wrap input::placeholder { color: var(--text3); }
+
+  .search-icon {
+    position: absolute;
+    left: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text3);
+    font-size: 14px;
+    pointer-events: none;
+  }
+
+  .filter-select {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 13px;
+    color: var(--text2);
+    outline: none;
+    cursor: pointer;
+  }
+
+  /* CATEGORY */
+  .cat-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 2rem 0 0.75rem;
+  }
+
+  .cat-header:first-child { margin-top: 0; }
+
+  .cat-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--green);
+  }
+
+  .cat-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .cat-count {
+    font-size: 11px;
+    color: var(--text3);
+    font-weight: 500;
+  }
+
+  /* SLOT GRID */
+  .slot-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+
+  .slot-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr auto auto;
+    gap: 12px;
+    align-items: center;
+    transition: background 0.15s, border-color 0.15s;
+    cursor: default;
+  }
+
+  .slot-card:hover { background: var(--bg4); border-color: var(--border2); }
+  .slot-card.assigned { border-left: 3px solid var(--green); }
+  .slot-card.drag-over { background: var(--green-dim); border-color: var(--green); }
+  .slot-card.dragging { opacity: 0.4; }
+
+  .slot-info .slot-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+
+  .slot-info .slot-file {
+    font-size: 11px;
+    font-family: 'Barlow Condensed', monospace;
+    color: var(--text3);
+    letter-spacing: 0.03em;
+  }
+
+  .slot-assigned .file-name {
+    font-size: 13px;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 220px;
+  }
+
+  .slot-assigned .file-size {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 1px;
+  }
+
+  .slot-assigned .no-file {
+    font-size: 12px;
+    color: var(--text3);
+    font-style: italic;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  .badge-empty { background: var(--bg4); color: var(--text3); border: 1px solid var(--border); }
+  .badge-ready { background: var(--green-dim); color: var(--green); border: 1px solid var(--green-dark); }
+
+  .slot-actions { display: flex; gap: 6px; }
+
+  .icon-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+
+  .icon-btn:hover { background: var(--surface2); color: var(--text); border-color: var(--border2); }
+  .icon-btn.play:hover { background: var(--green-dim); color: var(--green); border-color: var(--green-dark); }
+  .icon-btn.stop { background: var(--green-dim); color: var(--green); border-color: var(--green-dark); }
+  .icon-btn.del:hover { background: var(--red-dim); color: var(--red); border-color: #ff444433; }
+
+  .choose-btn {
+    padding: 5px 12px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 6px;
+    border: 1px solid var(--border2);
+    background: var(--surface);
+    color: var(--text2);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .choose-btn:hover { background: var(--surface2); color: var(--text); border-color: var(--green-dark); }
+
+  /* DROP ZONE */
+  .drop-zone {
+    border: 2px dashed var(--border2);
+    border-radius: 10px;
+    padding: 2.5rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+
+  .drop-zone:hover, .drop-zone.hovering {
+    border-color: var(--green);
+    background: var(--green-dim);
+  }
+
+  .drop-zone-icon { font-size: 32px; margin-bottom: 12px; }
+  .drop-zone-title { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+  .drop-zone-sub { font-size: 13px; color: var(--text3); }
+
+  /* GUIDE */
+  .guide-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin-bottom: 2rem;
+  }
+
+  .guide-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    transition: border-color 0.2s;
+  }
+
+  .guide-card:hover { border-color: var(--border2); }
+
+  .guide-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: var(--green);
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
+
+  .guide-card h3 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .guide-card p { font-size: 13px; color: var(--text3); line-height: 1.6; }
+
+  .info-panel {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--amber);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin-bottom: 1.5rem;
+  }
+
+  .info-panel p { font-size: 13px; color: var(--text2); line-height: 1.6; }
+  .info-panel strong { color: var(--amber); font-weight: 600; }
+  .info-panel code { font-family: 'Barlow Condensed', monospace; font-size: 12px; background: var(--surface); padding: 1px 5px; border-radius: 4px; color: var(--green); }
+
+  /* TOAST */
+  #toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 999;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-left: 3px solid var(--green);
+    color: var(--text);
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+    transition: opacity 0.2s, transform 0.2s;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  #toast.show { opacity: 1; transform: translateY(0); }
+
+  .empty-state {
+    padding: 3rem;
+    text-align: center;
+    color: var(--text3);
+    font-size: 14px;
+  }
+
+  input[type=file] { display: none; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--green-dark); }
+
+  @media (max-width: 700px) {
+    .stats-bar { grid-template-columns: repeat(2, 1fr); }
+    .slot-card { grid-template-columns: 1fr auto; }
+    .slot-assigned { display: none; }
+    nav { padding: 0 1rem; }
+    .hero, .main { padding-left: 1rem; padding-right: 1rem; }
+    .stats-bar { margin-left: 1rem; margin-right: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">
+    <div class="nav-logo">⚽</div>
+    <div class="nav-title">PES<span>17</span> Music CPK</div>
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="switchTab('slots', this)">Track Slots</button>
+    <button class="nav-tab" onclick="switchTab('guide', this)">Guide</button>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge">CPK Builder · v1.0</div>
+  <h1>Build Your<br><span>Custom Music</span> Pack</h1>
+  <p>Assign MP3 or OGG audio files to PES 2017 music slots and export a manifest to create your music.cpk file.</p>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-cell">
+    <div class="stat-label">Total Slots</div>
+    <div class="stat-value" id="stat-total">28</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-label">Assigned</div>
+    <div class="stat-value green" id="stat-assigned">0</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-label">Remaining</div>
+    <div class="stat-value" id="stat-empty">28</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-label">Progress</div>
+    <div class="stat-value" id="stat-pct">0%</div>
+    <div class="progress-wrap"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- SLOTS SECTION -->
+  <div id="sec-slots" class="section active">
+
+    <div class="toolbar">
+      <button class="btn btn-primary" onclick="document.getElementById('bulk-input').click()">
+        <span>↑</span> Add Audio Files
+      </button>
+      <input type="file" id="bulk-input" accept="audio/*" multiple onchange="handleBulkUpload(this.files)">
+
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input type="text" id="search-input" placeholder="Search slots..." oninput="renderSlots()">
+      </div>
+
+      <select class="filter-select" onchange="filterStatus=this.value; renderSlots()">
+        <option value="all">All slots</option>
+        <option value="assigned">Assigned only</option>
+        <option value="empty">Empty only</option>
+      </select>
+
+      <button class="btn btn-danger" onclick="clearAll()">✕ Clear All</button>
+      <button class="btn btn-export" onclick="exportManifest()">↓ Export CPK Manifest</button>
+    </div>
+
+    <!-- DROP ZONE -->
+    <div class="drop-zone" id="drop-zone"
+      ondragover="dzOver(event)"
+      ondragleave="dzLeave()"
+      ondrop="dzDrop(event)"
+      onclick="document.getElementById('bulk-input').click()">
+      <div class="drop-zone-icon">🎵</div>
+      <div class="drop-zone-title">Drop audio files here to auto-assign</div>
+      <div class="drop-zone-sub">or click to browse · MP3, OGG, WAV, FLAC supported</div>
+    </div>
+
+    <div id="slots-container"></div>
+  </div>
+
+  <!-- GUIDE SECTION -->
+  <div id="sec-guide" class="section">
+    <div class="guide-grid">
+      <div class="guide-card">
+        <div class="guide-num">1</div>
+        <h3>Add your audio files</h3>
+        <p>Click "Add Audio Files" or drag &amp; drop MP3 / OGG files into the drop zone. Multiple files will auto-fill empty slots in order.</p>
+      </div>
+      <div class="guide-card">
+        <div class="guide-num">2</div>
+        <h3>Assign tracks to slots</h3>
+        <p>Each slot maps to a specific PES 17 in-game sound. Click "Choose" next to any slot to assign a specific track. Drag rows to swap tracks between slots.</p>
+      </div>
+      <div class="guide-card">
+        <div class="guide-num">3</div>
+        <h3>Preview your tracks</h3>
+        <p>Use the play button (▶) to preview any assigned track right in the browser before you finalize.</p>
+      </div>
+      <div class="guide-card">
+        <div class="guide-num">4</div>
+        <h3>Export &amp; pack</h3>
+        <p>Click "Export CPK Manifest" to download a <code>music_cpk_manifest.txt</code> with renaming instructions and folder paths.</p>
+      </div>
+    </div>
+
+    <div class="info-panel">
+      <p><strong>File naming:</strong> PES 17 expects <code>.adx</code> filenames inside the CPK. Rename your audio files as shown in the manifest, place them in <code>Asset/Audio/BGM/</code> and use <strong>CPK Tools</strong> to pack them into <code>music.cpk</code>, then place that file in <code>PES17/Data/</code>.</p>
+    </div>
+
+    <div class="info-panel" style="border-left-color: var(--green);">
+      <p><strong>Slot categories:</strong> The builder covers <strong>Menu &amp; UI</strong> (main menu, edit, matchday screens), <strong>Match Atmosphere</strong> (kick-off, half-time, goal jingles, FT results), <strong>Anthems</strong> (UCL, UEL, and 4 club anthem slots), <strong>Commentary</strong>, and <strong>Highlights</strong> — 28 slots total.</p>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+const SLOTS = [
+  { cat:"Menu & UI",          id:"bgm_menu_main",     name:"Main Menu BGM",         file:"bgm_menu_main.adx" },
+  { cat:"Menu & UI",          id:"bgm_menu_myclub",   name:"MyClub Menu BGM",       file:"bgm_myclub.adx" },
+  { cat:"Menu & UI",          id:"bgm_menu_matchday", name:"Matchday Screen BGM",   file:"bgm_matchday.adx" },
+  { cat:"Menu & UI",          id:"bgm_menu_results",  name:"Results Screen BGM",    file:"bgm_results.adx" },
+  { cat:"Menu & UI",          id:"bgm_menu_lineup",   name:"Lineup Screen BGM",     file:"bgm_lineup.adx" },
+  { cat:"Menu & UI",          id:"bgm_menu_replay",   name:"Replay Menu BGM",       file:"bgm_replay.adx" },
+  { cat:"Menu & UI",          id:"bgm_menu_edit",     name:"Edit Mode BGM",         file:"bgm_edit.adx" },
+  { cat:"Match Atmosphere",   id:"bgm_kickoff",       name:"Kick-off Intro",        file:"bgm_kickoff.adx" },
+  { cat:"Match Atmosphere",   id:"bgm_halftime",      name:"Half-time BGM",         file:"bgm_halftime.adx" },
+  { cat:"Match Atmosphere",   id:"bgm_pregame",       name:"Pre-game Tunnel BGM",   file:"bgm_pregame.adx" },
+  { cat:"Match Atmosphere",   id:"bgm_warmup",        name:"Warmup BGM",            file:"bgm_warmup.adx" },
+  { cat:"Match Atmosphere",   id:"bgm_goal_01",       name:"Goal Jingle 1",         file:"bgm_goal_01.adx" },
+  { cat:"Match Atmosphere",   id:"bgm_goal_02",       name:"Goal Jingle 2",         file:"bgm_goal_02.adx" },
+  { cat:"Match Atmosphere",   id:"bgm_goal_03",       name:"Goal Jingle 3",         file:"bgm_goal_03.adx" },
+  { cat:"Match Atmosphere",   id:"bgm_ft_win",        name:"FT Win Jingle",         file:"bgm_ft_win.adx" },
+  { cat:"Match Atmosphere",   id:"bgm_ft_lose",       name:"FT Loss Jingle",        file:"bgm_ft_lose.adx" },
+  { cat:"Match Atmosphere",   id:"bgm_ft_draw",       name:"FT Draw Jingle",        file:"bgm_ft_draw.adx" },
+  { cat:"Anthems",            id:"anthem_ucl",        name:"UCL Anthem",            file:"anthem_ucl.adx" },
+  { cat:"Anthems",            id:"anthem_uel",        name:"UEL Anthem",            file:"anthem_uel.adx" },
+  { cat:"Anthems",            id:"anthem_club_01",    name:"Club Anthem Slot 1",    file:"anthem_club_01.adx" },
+  { cat:"Anthems",            id:"anthem_club_02",    name:"Club Anthem Slot 2",    file:"anthem_club_02.adx" },
+  { cat:"Anthems",            id:"anthem_club_03",    name:"Club Anthem Slot 3",    file:"anthem_club_03.adx" },
+  { cat:"Anthems",            id:"anthem_club_04",    name:"Club Anthem Slot 4",    file:"anthem_club_04.adx" },
+  { cat:"Commentary",         id:"commentary_intro",  name:"Commentary Intro",      file:"commentary_intro.adx" },
+  { cat:"Highlights",         id:"bgm_hl_01",         name:"Highlights Pack 1",     file:"bgm_hl_01.adx" },
+  { cat:"Highlights",         id:"bgm_hl_02",         name:"Highlights Pack 2",     file:"bgm_hl_02.adx" },
+  { cat:"Highlights",         id:"bgm_hl_03",         name:"Highlights Pack 3",     file:"bgm_hl_03.adx" },
+  { cat:"Highlights",         id:"bgm_hl_04",         name:"Highlights Pack 4",     file:"bgm_hl_04.adx" },
+];
+
+let assignments = {};
+let filterStatus = 'all';
+let currentAudio = null;
+let currentPlayId = null;
+let dragSrcId = null;
+
+function fmt(bytes) {
+  if (!bytes) return '';
+  if (bytes < 1024*1024) return Math.round(bytes/1024) + ' KB';
+  return (bytes/1024/1024).toFixed(1) + ' MB';
+}
+
+function updateStats() {
+  const total = SLOTS.length;
+  const assigned = Object.keys(assignments).length;
+  const pct = Math.round((assigned/total)*100);
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-assigned').textContent = assigned;
+  document.getElementById('stat-empty').textContent = total - assigned;
+  document.getElementById('stat-pct').textContent = pct + '%';
+  document.getElementById('progress-bar').style.width = pct + '%';
+}
+
+function renderSlots() {
+  const search = document.getElementById('search-input').value.toLowerCase();
+  const cats = [...new Set(SLOTS.map(s => s.cat))];
+  const container = document.getElementById('slots-container');
+  let html = '';
+
+  cats.forEach(cat => {
+    const rows = SLOTS.filter(s => {
+      const ms = !search || s.name.toLowerCase().includes(search) || s.id.includes(search) || s.file.includes(search);
+      const mf = filterStatus === 'all' ? true : filterStatus === 'assigned' ? !!assignments[s.id] : !assignments[s.id];
+      return s.cat === cat && ms && mf;
+    });
+    if (!rows.length) return;
+
+    html += `<div class="cat-header">
+      <div class="cat-title">${cat}</div>
+      <div class="cat-line"></div>
+      <div class="cat-count">${rows.length} slot${rows.length !== 1 ? 's' : ''}</div>
+    </div>
+    <div class="slot-grid">`;
+
+    rows.forEach(slot => {
+      const a = assignments[slot.id];
+      const isPlaying = currentPlayId === slot.id;
+      html += `<div class="slot-card${a ? ' assigned' : ''}" id="card-${slot.id}"
+        draggable="true"
+        ondragstart="onDragStart(event,'${slot.id}')"
+        ondragover="onDragOver(event,'${slot.id}')"
+        ondrop="onDrop(event,'${slot.id}')"
+        ondragleave="onDragLeave('${slot.id}')">
+
+        <div class="slot-info">
+          <div class="slot-name">${slot.name}</div>
+          <div class="slot-file">${slot.file}</div>
+        </div>
+
+        <div class="slot-assigned">
+          ${a
+            ? `<div class="file-name" title="${a.name}">${a.name}</div>
+               <div class="file-size">${fmt(a.size)}</div>`
+            : `<div class="no-file">No file assigned</div>`}
+        </div>
+
+        <div>
+          <span class="badge ${a ? 'badge-ready' : 'badge-empty'}">${a ? '✓ Ready' : '— Empty'}</span>
+        </div>
+
+        <div class="slot-actions">
+          ${a
+            ? `<button class="icon-btn play ${isPlaying ? 'stop' : ''}" title="${isPlaying ? 'Stop' : 'Preview'}" onclick="togglePlay('${slot.id}')">${isPlaying ? '■' : '▶'}</button>
+               <button class="icon-btn del" title="Remove" onclick="removeSlot('${slot.id}')">✕</button>`
+            : `<button class="choose-btn" onclick="chooseFile('${slot.id}')">Choose</button>`}
+        </div>
+      </div>`;
+    });
+
+    html += '</div>';
+  });
+
+  if (!html) html = '<div class="empty-state">No slots match your current filter.</div>';
+  container.innerHTML = html;
+}
+
+function chooseFile(slotId) {
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'audio/*';
+  inp.onchange = e => { if (e.target.files[0]) assignFile(slotId, e.target.files[0]); };
+  inp.click();
+}
+
+function assignFile(slotId, file) {
+  if (assignments[slotId]?.url) URL.revokeObjectURL(assignments[slotId].url);
+  assignments[slotId] = { name: file.name, size: file.size, url: URL.createObjectURL(file) };
+  updateStats(); renderSlots();
+  showToast('✓  Assigned: ' + file.name);
+}
+
+function removeSlot(slotId) {
+  if (currentPlayId === slotId) stopAudio();
+  if (assignments[slotId]?.url) URL.revokeObjectURL(assignments[slotId].url);
+  delete assignments[slotId];
+  updateStats(); renderSlots();
+  showToast('Removed track');
+}
+
+function clearAll() {
+  if (!Object.keys(assignments).length) return;
+  if (!confirm('Clear all assigned tracks?')) return;
+  stopAudio();
+  Object.values(assignments).forEach(a => { if (a.url) URL.revokeObjectURL(a.url); });
+  assignments = {};
+  updateStats(); renderSlots();
+  showToast('All tracks cleared');
+}
+
+function togglePlay(slotId) {
+  if (currentPlayId === slotId) { stopAudio(); renderSlots(); return; }
+  stopAudio();
+  const a = assignments[slotId]; if (!a) return;
+  currentAudio = new Audio(a.url);
+  currentPlayId = slotId;
+  currentAudio.play();
+  currentAudio.onended = () => { currentPlayId = null; currentAudio = null; renderSlots(); };
+  renderSlots();
+}
+
+function stopAudio() {
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+  currentPlayId = null;
+}
+
+function handleBulkUpload(files) {
+  const empty = SLOTS.filter(s => !assignments[s.id]);
+  let count = 0;
+  Array.from(files).forEach((f, i) => { if (i < empty.length) { assignFile(empty[i].id, f); count++; } });
+  showToast(`Auto-assigned ${count} file${count !== 1 ? 's' : ''}`);
+}
+
+// Drag & drop between slots
+function onDragStart(e, id) { dragSrcId = id; document.getElementById('card-'+id)?.classList.add('dragging'); }
+function onDragOver(e, id) { e.preventDefault(); document.getElementById('card-'+id)?.classList.add('drag-over'); }
+function onDragLeave(id) { document.getElementById('card-'+id)?.classList.remove('drag-over', 'dragging'); }
+function onDrop(e, id) {
+  e.preventDefault();
+  const card = document.getElementById('card-'+id);
+  card?.classList.remove('drag-over');
+  if (!dragSrcId || dragSrcId === id) { dragSrcId = null; return; }
+  const tmp = assignments[dragSrcId];
+  if (assignments[id]) assignments[dragSrcId] = assignments[id]; else delete assignments[dragSrcId];
+  if (tmp) assignments[id] = tmp; else delete assignments[id];
+  dragSrcId = null;
+  renderSlots(); updateStats();
+  showToast('Tracks swapped');
+}
+
+// Page-level drop zone
+function dzOver(e) { e.preventDefault(); document.getElementById('drop-zone').classList.add('hovering'); }
+function dzLeave() { document.getElementById('drop-zone').classList.remove('hovering'); }
+function dzDrop(e) {
+  e.preventDefault();
+  document.getElementById('drop-zone').classList.remove('hovering');
+  handleBulkUpload(e.dataTransfer.files);
+}
+
+// Also accept drops on the body that land outside a slot card
+document.addEventListener('dragover', e => e.preventDefault());
+document.addEventListener('drop', e => {
+  if (!e.target.closest('.slot-card') && !e.target.closest('.drop-zone')) {
+    e.preventDefault();
+    handleBulkUpload(e.dataTransfer.files);
+  }
+});
+
+function exportManifest() {
+  const assigned = SLOTS.filter(s => assignments[s.id]);
+  if (!assigned.length) { showToast('No tracks assigned yet'); return; }
+  const cats = [...new Set(assigned.map(s => s.cat))];
+  let out = '# =============================================\n';
+  out += '# PES 17 Music CPK Manifest\n';
+  out += `# Generated: ${new Date().toLocaleString()}\n`;
+  out += `# Assigned: ${assigned.length} / ${SLOTS.length} slots\n`;
+  out += '# =============================================\n\n';
+  out += '# Instructions:\n';
+  out += '# 1. Rename your source files as shown below\n';
+  out += '# 2. Place them in:  Asset/Audio/BGM/\n';
+  out += '# 3. Use CPK Tools to pack folder into music.cpk\n';
+  out += '# 4. Copy music.cpk to:  PES 2017/Data/\n\n';
+  cats.forEach(cat => {
+    out += `## ${cat}\n`;
+    assigned.filter(s => s.cat === cat).forEach(s => {
+      out += `${s.file.padEnd(30)} <-- ${assignments[s.id].name}\n`;
+    });
+    out += '\n';
+  });
+  const unassigned = SLOTS.filter(s => !assignments[s.id]);
+  if (unassigned.length) {
+    out += '## Unassigned Slots (keeping original PES audio)\n';
+    unassigned.forEach(s => { out += `${s.file.padEnd(30)} (original)\n`; });
+  }
+  const blob = new Blob([out], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'music_cpk_manifest.txt'; a.click();
+  URL.revokeObjectURL(url);
+  showToast('✓  Manifest exported!');
+}
+
+function switchTab(name, el) {
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('sec-' + name).classList.add('active');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// Init
+updateStats();
+renderSlots();
+</script>
+</body>
+</html>
